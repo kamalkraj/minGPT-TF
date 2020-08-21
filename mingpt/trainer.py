@@ -129,7 +129,7 @@ class Trainer:
         train_pb_max_len = math.ceil(float(self.train_dataset_len)/float(self.config.batch_size))
         test_pb_max_len = math.ceil(float(self.test_dataset_len)/float(self.config.batch_size)) if self.test_dataset else None
 
-        epoch_bar = master_bar(range(FLAGS.epochs))
+        epoch_bar = master_bar(range(self.config.max_epochs))
         with self.strategy.scope():
             for epoch in epoch_bar:
                 for inputs in progress_bar(self.train_dist_dataset,total=train_pb_max_len,parent=epoch_bar):
