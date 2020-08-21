@@ -134,7 +134,7 @@ class Trainer:
             for epoch in epoch_bar:
                 for inputs in progress_bar(self.train_dist_dataset,total=train_pb_max_len,parent=epoch_bar):
                     loss = train_step(inputs)
-                    self.tokens += tf.reduce_sum(tf.cast(inputs[1]>0,tf.int32))
+                    self.tokens += tf.reduce_sum(tf.cast(inputs[1]>0,tf.int32)).numpy()
                     train_loss_metric(loss)
                     epoch_bar.child.comment = f'training loss : {train_loss_metric.result()}'
                 print(f"epoch {epoch+1}: train loss {train_loss_metric.result():.5f}. lr {self.optimizer._decayed_lr(tf.float32):e}")
