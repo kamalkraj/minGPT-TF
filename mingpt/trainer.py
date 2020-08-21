@@ -62,9 +62,9 @@ class Trainer:
                                              gradient_clip_norm=config.grad_norm_clip,
                                              exclude_from_weight_decay=['layer_norm', 'bias'])
             self.cce = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True,reduction=tf.keras.losses.Reduction.NONE)
-            self.train_dist_dataset = self.strategy.experimental_distribute_dataset(train_dataset)
+            self.train_dist_dataset = self.strategy.experimental_distribute_dataset(self.train_dataset)
             if self.test_dataset:
-                self.test_dist_dataset = self.strategy.experimental_distribute_dataset(test_dataset)
+                self.test_dist_dataset = self.strategy.experimental_distribute_dataset(self.test_dataset)
 
     def save_checkpoints(self):
         if self.config.ckpt_path is not None:
