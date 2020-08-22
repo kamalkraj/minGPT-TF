@@ -35,7 +35,7 @@ def sample(model, x, steps, temperature=1.0, sample=False, top_k=None):
         probs = tf.nn.softmax(logits, axis=-1)
         # sample from the distribution or take the most likely
         if sample:
-            ix = tf.random.categorical(logits,1)
+            ix = tf.random.categorical(logits,1,dtype=tf.int32)
         else:
             _, ix = tf.math.top_k(probs, k=1)
         # append to the sequence and continue
