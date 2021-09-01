@@ -198,7 +198,6 @@ class GPT(tf.keras.Model):
         self.n_embd = config.n_embd
         self.n_layer = config.n_layer
 
-    @tf.function
     def call(self, inputs: tf.Tensor, training=False):
         t = tf.shape(inputs)[1]
         # assert t <= self.block_size, "Cannot forward, model block size is exhausted."
