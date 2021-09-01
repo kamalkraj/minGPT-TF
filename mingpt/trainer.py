@@ -9,6 +9,7 @@ import math
 import numpy as np
 import tensorflow as tf
 
+from tensorflow.python.distribute.values import PerReplica
 from fastprogress import master_bar, progress_bar
 from mingpt.optimization import AdamWeightDecay
 
@@ -150,7 +151,10 @@ class Trainer:
             for epoch in epoch_bar:
                 for inputs in progress_bar(self.train_dist_dataset,total=train_pb_max_len,parent=epoch_bar):
                     loss = train_step(inputs)
-                    self.tokens += tf.reduce_sum(tf.cast(inputs[1]>=0,tf.int32)).numpy()
+                    labels = inputs[-1]
+                    if isinstance(labels, PerReplica):
+                        labels = tf.concat(labels.values, axis=0)
+                    self.tokens += tf.reduce_sum(tf.cast(labels >= 0, tf.int32)).numpy()
                     train_loss_metric(loss)
                     epoch_bar.child.comment = f'training loss : {train_loss_metric.result()} lr : {self.optimizer._decayed_lr(tf.float32):e}'
                 print(f"epoch {epoch+1}: train loss {train_loss_metric.result():.5f}. lr {self.optimizer._decayed_lr(tf.float32):e}")
